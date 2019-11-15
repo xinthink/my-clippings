@@ -1,5 +1,12 @@
 {
   "dependencies": {
     "firebase-tools": "^7.7.0"
+  },
+  "scripts": {
+    "build": "flutter build web",
+    "clean": "rm -rf build",
+    "firebase": "firebase",
+    "deploy": "yarn clean && yarn build && firebase deploy --except functions",
+    "serve": "yarn build && firebase serve -p 8080"
   }
 }
