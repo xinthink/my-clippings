@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:notever/local.dart' show FirebaseConfig;
+//import 'package:notever/local.dart' show FirebaseConfig;
 import 'package:notever/screens.dart';
 
 void main() {
   // local debugging only
-  FirebaseConfig.initialize();
+//  FirebaseConfig.initialize();
   runApp(MyApp());
 }
 

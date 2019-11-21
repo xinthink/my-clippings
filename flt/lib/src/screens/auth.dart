@@ -31,7 +31,7 @@ class _AuthState extends State<AuthScreen> {
     ),
   );
 
-  /// Retrieve custom token from backend
+  /// Retrieve customToken from backend
   void _requestToken() async {
     if (widget.uid?.isNotEmpty != true) {
       debugPrint('abort firebase auth: uid is empty');
@@ -39,13 +39,11 @@ class _AuthState extends State<AuthScreen> {
     }
 
     try {
-      final userDoc = await firestore().collection('users').doc(widget.uid).get();
-      if (!userDoc.exists) return debugPrint("abort firebase auth: auth info not found for uid=${widget.uid}");
+      final doc = await firestore().collection('_t').doc(widget.uid).get();
+      if (!doc.exists) return debugPrint("abort firebase auth: token not found for uid=${widget.uid}");
 
-      final authInfo = userDoc.data();
-      debugPrint("got authInfo: '$authInfo'");
-      final customToken = authInfo["customToken"];
-      _firebaseAuth(customToken);
+      final tokenInfo = doc.data();
+      _firebaseAuth(tokenInfo["customToken"]);
     } catch (e, s) {
       debugPrint("firebase auth failed: $e $s");
     }
@@ -53,7 +51,7 @@ class _AuthState extends State<AuthScreen> {
 
   /// Login using Firebase custom auth
   Future _firebaseAuth(String customToken) async {
-    if (customToken?.isNotEmpty != true) throw Exception('customToken is empty');
+    if (customToken?.isNotEmpty != true) throw Exception('token is empty');
 
     await auth().signInWithCustomToken(customToken);
     final user = auth().currentUser;

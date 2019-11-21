@@ -1,6 +1,7 @@
+import 'dart:async' show StreamSubscription;
 import 'dart:html' show window;
 
-import 'package:firebase/firebase.dart';
+import 'package:firebase/firebase.dart' show auth, User;
 import 'package:flutter/material.dart';
 import 'package:notever/local.dart';
 
@@ -11,12 +12,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   User currentUser;
+  StreamSubscription<User> authStateSub;
 
   @override
   void initState() {
     super.initState();
     currentUser = auth().currentUser;
-    debugPrint("check Firebase auth state: $currentUser");
+    authStateSub = auth().onAuthStateChanged.listen(_onAuthState);
+  }
+
+  @override
+  void dispose() {
+    authStateSub?.cancel();
+    super.dispose();
   }
 
   @override
@@ -82,6 +90,13 @@ class _HomeScreenState extends State<HomeScreen> {
     await auth().signOut();
     setState(() {
       currentUser = null;
+    });
+  }
+
+  /// Firebase auth state listener
+  void _onAuthState(User user) {
+    setState(() {
+      currentUser = user;
     });
   }
 }

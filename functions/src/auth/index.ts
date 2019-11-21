@@ -61,12 +61,20 @@ function onVerify(token: string, tokenSecret: string, profile: any, cb: Callback
   admin.auth()
     .createCustomToken(uid, user)
     .then(customToken => assoc('customToken', customToken, user))
-    .then((u: object) =>
-      admin.firestore()
-        .collection("users")
-        .doc(uid)
-        .set(u)
-        .then(() => u)
+    .then((u: any) => admin.firestore()
+      .collection("users")
+      .doc(uid)
+      .set(u)
+      .then(() => u)
+    )
+    .then((u: any) => admin.firestore()
+      .collection("_t") // cache the token for frontend retrieval
+      .doc(uid)
+      .set({
+        customToken: u.customToken,
+        expires: Date.now() + 86400000, // expires at 24hr later
+      })
+      .then(() => u)
     )
     .then(partial(cb, [null]))
     .catch(cb);
