@@ -1,6 +1,6 @@
-# notever
+# Frontend of Notever
 
-A new Flutter project.
+Built with Flutter Web.
 
 ## Getting Started
 
