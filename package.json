@@ -3,10 +3,10 @@
     "firebase-tools": "^7.7.0"
   },
   "scripts": {
-    "build": "flutter build web",
-    "clean": "rm -rf build",
+    "build": "cd flt && flutter build web",
+    "clean": "cd flt && flutter clean",
     "firebase": "firebase",
     "deploy": "yarn clean && yarn build && firebase deploy --except functions",
-    "serve": "yarn build && firebase serve -p 8080"
+    "serve": "yarn build && firebase emulators:start"
   }
 }

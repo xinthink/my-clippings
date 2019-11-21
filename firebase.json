@@ -3,14 +3,8 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "functions": {
-    "predeploy": [
-      "npm --prefix \"$RESOURCE_DIR\" run lint",
-      "npm --prefix \"$RESOURCE_DIR\" run build"
-    ]
-  },
   "hosting": {
-    "public": "public",
+    "public": "flt/build/web",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -21,6 +15,34 @@
         "source": "**",
         "destination": "/index.html"
       }
-    ]
+    ],
+    "headers": [{
+      // Specifies a CORS header for xhr requests
+      "source": "**/*.json",
+      "headers": [{
+        "key": "Access-Control-Allow-Origin",
+        "value": "*"
+      }, {
+        "key": "Access-Control-Allow-Headers",
+        "value": "Content-Type, Content-Length, Authorization, Accept, X-Requested-With, yourHeaderFeild"
+      }, {
+        "key": "Access-Control-Allow-Methods",
+        "value": "PUT, POST, GET, DELETE, OPTIONS"
+      }, {
+        "key": "Cache-Control",
+        "value": "no-cache"
+      }]
+    }]
+  },
+  "emulators": {
+    "hosting": {
+      "port": 8000
+    },
+    "firestore": {
+      "port": 5005
+    },
+    "functions": {
+      "port": 5001
+    }
   }
 }

@@ -38,3 +38,5 @@ lib/generated_plugin_registrant.dart
 # web only
 android/
 ios/
+
+local.dart

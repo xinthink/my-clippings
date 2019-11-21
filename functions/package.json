@@ -4,7 +4,7 @@
     "lint": "tslint --project tsconfig.json",
     "build": "tsc",
     "clean": "rm -rf lib",
-    "serve": "yarn build && firebase serve --only functions",
+    "serve": "export GOOGLE_APPLICATION_CREDENTIALS=notever-firebase-adminsdk.json; export FIREBASE_CONFIG=notever-firebase-adminsdk.json; yarn lint && yarn build && firebase emulators:start --only functions,firestore",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",
     "deploy": "yarn clean && yarn build && firebase deploy --only functions",
@@ -16,6 +16,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@google-cloud/firestore": "^2.6.0",
     "cookie-parser": "^1.4.3",
     "evernote": "^2.0.5",
     "express": "^4.16.2",
