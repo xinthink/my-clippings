@@ -4,6 +4,7 @@ import 'dart:html' show window;
 import 'package:firebase/firebase.dart' show auth, User;
 import 'package:flutter/material.dart';
 import 'package:notever/local.dart';
+import 'package:notever/widgets.dart' show ClippingList;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -12,7 +13,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   User currentUser;
-  StreamSubscription<User> authStateSub;
+  int selectedClippingIndex;
+
+  StreamSubscription authStateSub;
 
   @override
   void initState() {
@@ -39,10 +42,21 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Center(
-        child: currentUser != null
-          ? Text("Logged in user: [${currentUser.uid}] ${currentUser.displayName ?? ''} ${currentUser.email ?? ''}")
-          : SizedBox(),
+//      body: Center(
+//        child: Column(
+//          children: <Widget>[
+//            currentUser != null
+//              ? Text("Logged in user: [${currentUser.uid}] ${currentUser.displayName ?? ''} ${currentUser.email ?? ''}")
+//              : SizedBox(),
+//            const SizedBox(height: 12),
+//            ClippingList(key: clippingListKey),
+//          ],
+//        ),
+//      ),
+      body: Container(
+        child: ClippingList(
+          onSelection: _onClippingSelected,
+        ),
       ),
     );
 
@@ -97,6 +111,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onAuthState(User user) {
     setState(() {
       currentUser = user;
+    });
+  }
+
+  /// On clipping selection changed
+  void _onClippingSelected(int index) {
+    debugPrint("clipping #$index selected.");
+    setState(() {
+      selectedClippingIndex = index;
     });
   }
 }
