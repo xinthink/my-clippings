@@ -5,12 +5,12 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Flutter",
+      "name": "notever flt",
       "type": "dart",
       "request": "launch",
       "program": "lib/main.dart",
       "cwd": "flt",
-      "args": ["--web-port", "8000"]
+      "args": ["-d", "chrome", "--web-port", "8000"]
     }
   ]
 }
