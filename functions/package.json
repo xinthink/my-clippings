@@ -30,7 +30,8 @@
     "passport-evernote": "^1.0.1",
     "q": "^1.5.1",
     "ramda": "^0.26.1",
-    "uuid": "^3.3.3"
+    "uuid": "^3.3.3",
+    "xml-escape": "^1.1.0"
   },
   "devDependencies": {
     "@firebase/app-types": "^0.4.7",
@@ -43,6 +44,7 @@
     "@types/ramda": "^0.26.34",
     "@types/thrift": "^0.10.8",
     "@types/uuid": "^3.4.6",
+    "@types/xml-escape": "^1.1.0",
     "firebase-functions-test": "^0.1.6",
     "firebase-tools": "^7.7.0",
     "tslint": "^5.12.0",

@@ -118,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
     await auth().signOut();
     setState(() {
       currentUser = null;
+      selectedClippingIndex = -1;
     });
   }
 

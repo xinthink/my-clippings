@@ -1,5 +1,7 @@
 import * as Evernote from 'evernote';
-import { nbind } from 'q';
+import xcape = require("xml-escape");
+
+const { Types } = Evernote;
 
 // type EvernoteAuth = {
 //   provider: string,
@@ -7,8 +9,8 @@ import { nbind } from 'q';
 // };
 
 export default class EvernoteTool {
-  private client: Evernote.Client;
-  private noteStore: Evernote.NoteStoreClient;
+  private readonly client: Evernote.Client;
+  private readonly noteStore: Evernote.NoteStoreClient;
 
   constructor(token: string, config: any) {
     const evernoteCfg = {
@@ -21,19 +23,20 @@ export default class EvernoteTool {
 
   /** Create a note from the given clipping */
   async createNote(clipping: Clipping) {
-    const note = new Evernote.Note({
+    const note = new Types.Note({
+      title: `${clipping.book} reading notes`,
       tagNames: normalizeTags(['Kindle', clipping.book, clipping.author]),
       content: `<?xml version="1.0" encoding="UTF-8"?>
       <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
       <en-note>
-        <p><![CDATA[${clipping.text}]]></p>
+        <p>${xcape(clipping.text)}</p>
         <br/>
-        <p><![CDATA[${clipping.book} ${clipping.author}]]</p>
+        <p>${xcape(clipping.book)} ${xcape(clipping.author)}</p>
       </en-note>
       `,
     });
 
-    await nbind(this.noteStore.createNote, this.noteStore)(note);
+    await this.noteStore.createNote(note);
   }
 }
 
