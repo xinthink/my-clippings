@@ -1,7 +1,7 @@
 import 'dart:io' show HttpException;
-import 'dart:convert' show jsonDecode;
+import 'dart:convert' show Encoding, jsonDecode, jsonEncode;
 
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/foundation.dart' show debugPrint, required;
 import 'package:http/http.dart' as http;
 
 typedef ErrorCheck = http.Response Function(http.Response);
@@ -36,10 +36,57 @@ Future<T> get<T>(uri, {
 ///
 /// with optional [headers],
 /// customized [errorCheck] handling HTTP status, `2xx` considered successful by default.
-Future<dynamic> getJson<T>(uri, {
+Future<dynamic> getJson(uri, {
   Map<String, String> headers,
   ErrorCheck errorCheck,
 }) => get(uri, headers: headers, bodyParser: jsonBody, errorCheck: errorCheck);
+
+/// `HTTP POST` [body] to [uri].
+///
+/// with optional body [encoding] and [headers],
+/// customized [bodyParser] to parse the response body, defaults to *ignoring*,
+/// customized [errorCheck] handling HTTP status, `2xx` considered successful by default.
+///
+/// see also: [http.post]
+Future<T> post<T>(uri, {
+  @required dynamic body,
+  Encoding encoding,
+  Map<String, String> headers,
+  BodyParser<T> bodyParser,
+  ErrorCheck errorCheck,
+}) {
+  debugPrint("POST $uri headers=$headers");
+  return http.post(uri,
+      body: body,
+      encoding: encoding,
+      headers: headers,
+    )
+    .then(errorCheck ?? _checkHttpError)
+    .then((resp) => (bodyParser ?? ignoreBody)(resp.body));
+}
+
+/// `HTTP POST` a JSON [body] to [uri].
+///
+/// with optional body [encoding] and [headers],
+/// customized [bodyParser] to parse the response body, defaults to *ignoring*,
+/// customized [errorCheck] handling HTTP status, `2xx` considered successful by default.
+///
+/// see also: [http.post]
+Future<dynamic> postJson(uri, {
+  @required dynamic body,
+  Encoding encoding,
+  Map<String, String> headers,
+  ErrorCheck errorCheck,
+}) => post(
+  uri,
+  body: jsonEncode(body),
+  encoding: encoding,
+  headers: _mergeHeaders({
+    'Content-type': 'application/json',
+  }, headers),
+  bodyParser: jsonBody,
+  errorCheck: errorCheck,
+);
 
 /// Checking HTTP status code for failures
 http.Response _checkHttpError(http.Response resp) {
@@ -47,4 +94,12 @@ http.Response _checkHttpError(http.Response resp) {
     throw HttpException("${resp.request.method} ${resp.request.url} failed: ${resp.statusCode}");
   }
   return resp;
+}
+
+/// Merge [extra] headers into the [base] one
+Map<String, String> _mergeHeaders(Map<String, String> base, Map<String, String> extra) {
+  final headers = Map<String, String>();
+  if (base != null) headers.addAll(base);
+  if (extra != null) headers.addAll(extra);
+  return headers;
 }

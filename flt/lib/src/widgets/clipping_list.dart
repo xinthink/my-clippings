@@ -28,6 +28,14 @@ class ClippingListState extends State<ClippingList> {
   /// Index of current selected clipping, `-1` if no selection
   int get selectedClipping => _selectedIndex;
 
+  /// A readonly subset of clippings newer than the selected index
+  List<Clipping> get unsyncedClippings => _selectedIndex > -1
+    ? List.unmodifiable(
+      _clippings
+        .sublist(0, _selectedIndex + 1)
+        .reversed
+    ) : null;
+
   @override
   void dispose() {
     _fileInputSub?.cancel();

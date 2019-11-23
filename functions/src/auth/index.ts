@@ -1,5 +1,6 @@
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
+import { PubSub } from '@google-cloud/pubsub';
 
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
@@ -8,6 +9,8 @@ import * as morgan from 'morgan';
 import * as passport from 'passport';
 import { Strategy as EvernoteStrategy } from 'passport-evernote';
 import { assoc, partial } from 'ramda';
+import * as uuid from 'uuid/v4';
+
 import config from '../local';
 import { FireSessionStore } from './FireSessionStore';
 import { YinxiangStrategy } from './YinxiangStrategy';
@@ -98,7 +101,8 @@ passport.deserializeUser((id: string, cb) => {
       cachedUser = d.exists ? d.data() : null;
       return cachedUser;
     })
-    .then(partial(cb, [null]), cb);
+    .then(partial(cb, [null]))
+    .catch(cb);
 });
 
 // CORS
@@ -112,6 +116,26 @@ authApp.all('*.json', (req, res, next) => {
 
 // routes
 authApp.get('/token.json', (req, res) => res.send(req.user));
+
+// handle clippings import requests TODO authentication
+authApp.post('/import.json', (req, res) => {
+  if (!req.body || req.body.length <= 0) {
+    res.send({});
+    return;
+  }
+
+  const pubsub = new PubSub();
+  pubsub.topic(config.pubsub.importTopic)
+    .publishJSON(req.body, {
+      taskId: uuid(),
+      createdAt: `${Date.now()}`,
+    })
+    .then(mid => {
+      console.log('message published', config.pubsub.importTopic, mid);
+      res.send({});
+    })
+    .catch(console.error);
+});
 
 // redirect to frontend after oauth complete
 authApp.get('/result', (req, res) =>

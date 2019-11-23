@@ -3,8 +3,11 @@ import 'dart:html' show window;
 
 import 'package:firebase/firebase.dart' show auth, User;
 import 'package:flutter/material.dart';
+import 'package:notever/framework.dart';
 import 'package:notever/local.dart';
-import 'package:notever/widgets.dart' show ClippingList;
+import 'package:notever/widgets.dart' show ClippingList, ClippingListState;
+
+import 'package:notever/src/clippings/clipping.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -15,6 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   User currentUser;
   int selectedClippingIndex;
 
+  final clippingListKey = GlobalKey<ClippingListState>();
   StreamSubscription authStateSub;
 
   @override
@@ -22,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     currentUser = auth().currentUser;
     authStateSub = auth().onAuthStateChanged.listen(_onAuthState);
+    selectedClippingIndex = -1;
   }
 
   @override
@@ -55,10 +60,19 @@ class _HomeScreenState extends State<HomeScreen> {
 //      ),
       body: Container(
         child: ClippingList(
+          key: clippingListKey,
           onSelection: _onClippingSelected,
         ),
       ),
+      floatingActionButton: _buildFab(),
     );
+
+  Widget _buildFab() => currentUser != null && selectedClippingIndex > -1
+    ? FloatingActionButton(
+      child: const Icon(Icons.cloud_upload),
+      onPressed: _onSyncClippings,
+    )
+    : const SizedBox();
 
   /// AppBar popup actions
   List<PopupMenuEntry<int>> _buildActions(BuildContext context) {
@@ -120,5 +134,21 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       selectedClippingIndex = index;
     });
+  }
+
+  /// Start syncing clippings to Evernote
+  void _onSyncClippings() async {
+    final clippings = clippingListKey.currentState?.unsyncedClippings;
+    if (clippings?.isNotEmpty != true) return;
+
+    try {
+      final uri = '${EvernoteConfig.funcPrefix}/import.json';
+      await postJson(uri, body: {
+        'uid': currentUser.uid,
+        'clippings': Clipping.clippingsToJson(clippings),
+      });
+    } catch (e) {
+      debugPrint('sync clippings request rejected: $e');
+    }
   }
 }

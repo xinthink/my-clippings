@@ -5,6 +5,7 @@
     "build": "tsc",
     "clean": "rm -rf lib",
     "serve": "export GOOGLE_APPLICATION_CREDENTIALS=notever-firebase-adminsdk.json; export FIREBASE_CONFIG=notever-firebase-adminsdk.json; yarn lint && yarn build && firebase emulators:start --only functions,firestore",
+    "local-test": "export GOOGLE_APPLICATION_CREDENTIALS=notever-firebase-adminsdk.json; export FIREBASE_CONFIG=notever-firebase-adminsdk.json; yarn lint && yarn build && firebase emulators:exec 'node local-test.js' --only functions,firestore",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",
     "deploy": "yarn clean && yarn build && firebase deploy --only functions",
@@ -17,6 +18,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@google-cloud/firestore": "^2.6.0",
+    "@google-cloud/pubsub": "^1.1.5",
     "cookie-parser": "^1.4.3",
     "evernote": "^2.0.5",
     "express": "^4.16.2",
@@ -27,17 +29,19 @@
     "passport": "^0.4.0",
     "passport-evernote": "^1.0.1",
     "q": "^1.5.1",
-    "ramda": "^0.26.1"
+    "ramda": "^0.26.1",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@firebase/app-types": "^0.4.7",
     "@types/cookie-parser": "^1.4.1",
-    "@types/evernote": "^1.25.35",
     "@types/express": "^4.11.0",
     "@types/express-session": "^1.15.6",
     "@types/morgan": "^1.7.35",
     "@types/passport": "^0.4.2",
+    "@types/q": "^1.5.2",
     "@types/ramda": "^0.26.34",
+    "@types/uuid": "^3.4.6",
     "firebase-functions-test": "^0.1.6",
     "firebase-tools": "^7.7.0",
     "tslint": "^5.12.0",

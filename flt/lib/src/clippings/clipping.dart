@@ -59,6 +59,10 @@ class Clipping {
     caseSensitive: false,
   );
 
+  /// Transform a list of [Clipping] to a JSON array.
+  static Iterable<Map<String, dynamic>> clippingsToJson(Iterable<Clipping> clippings) =>
+    clippings.map((c) => c.toJson()).toList(growable: false);
+
   final String book;
   final String author;
   final String timestamp;
