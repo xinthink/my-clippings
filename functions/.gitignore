@@ -5,7 +5,26 @@
 # Typescript v1 declaration files
 typings/
 
+# Node.js
 node_modules/
 
+# IDEA
+*.iml
+**/.idea/.name
+**/.idea/assetWizardSettings.xml
+**/.idea/caches
+# .idea/dictionaries
+**/.idea/gradle.xml
+**/.idea/jsLibraryMappings.xml
+**/.idea/libraries
+**/.idea/misc.xml
+**/.idea/modules.xml
+**/.idea/navEditor.xml
+**/.idea/runConfigurations.xml
+**/.idea/tasks.xml
+**/.idea/vcs.xml
+**/.idea/workspace.xml
+
+# Project
 local.ts
 notever-firebase-adminsdk*.json
