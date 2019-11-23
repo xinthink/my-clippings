@@ -1,20 +1,10 @@
-import { Client } from "@grpc/grpc-js";
-
-type Callback<T> = (err: any, value?: T | null) => void;
-type VoidCallback = (err?: any) => void;
-
 declare module "*.json" {
   const value: any;
   export default value;
 }
 
-declare module "passport-evernote";
-
-declare module "evernote" {
-  export default Evernote;
-  export type Client = any;
-  export type NoteStore = any;
-}
+type Callback<T> = (err: any, value?: T | null) => void;
+type VoidCallback = (err?: any) => void;
 
 type Clipping = {
   text: string,

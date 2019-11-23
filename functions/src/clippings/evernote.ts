@@ -1,4 +1,4 @@
-import Evernote from 'evernote';
+import * as Evernote from 'evernote';
 import { nbind } from 'q';
 
 // type EvernoteAuth = {

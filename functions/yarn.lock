@@ -301,6 +301,13 @@
   dependencies:
     "@types/express" "*"
 
+"@types/node-int64@*":
+  version "0.4.29"
+  resolved "https://registry.yarnpkg.com/@types/node-int64/-/node-int64-0.4.29.tgz#8c7c16a7c1195ae4f8beaa903b0018ac66291d16"
+  integrity sha512-rHXvenLTj/CcsmNAebaBOhxQ2MqEGl3yXZZcZ21XYR+gzGTTcpOy2N4IxpvTCz48loyQNatHvfn6GhIbbZ1R3Q==
+  dependencies:
+    "@types/node" "*"
+
 "@types/node@*":
   version "12.12.7"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.7.tgz#01e4ea724d9e3bd50d90c11fd5980ba317d8fa11"
@@ -323,7 +330,7 @@
   dependencies:
     "@types/express" "*"
 
-"@types/q@^1.5.2":
+"@types/q@*", "@types/q@^1.5.2":
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.2.tgz#690a1475b84f2a884fd07cd797c00f5f31356ea8"
   integrity sha512-ce5d3q03Ex0sy4R14722Rmt6MT07Ua+k4FwDfdcToYJcMKNtRVQvJ6JCAPdAmAnbRb6CsX6aYb9m96NGod9uTw==
@@ -347,6 +354,15 @@
   dependencies:
     "@types/express-serve-static-core" "*"
     "@types/mime" "*"
+
+"@types/thrift@^0.10.8":
+  version "0.10.8"
+  resolved "https://registry.yarnpkg.com/@types/thrift/-/thrift-0.10.8.tgz#c9b4293972a074ea86a3c94f77cdb8a15e605300"
+  integrity sha512-34UhuvFq2HJgn2nfXCFDLvBKeIbWzHjOFh1WHSQP7lsv4vGOirbKCcwVnAkx+1IOGuwpMR6GFnHoBe7tv1wO4A==
+  dependencies:
+    "@types/node" "*"
+    "@types/node-int64" "*"
+    "@types/q" "*"
 
 "@types/uuid@^3.4.6":
   version "3.4.6"
