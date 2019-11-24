@@ -1,11 +1,10 @@
 import 'dart:async' show StreamSubscription;
-import 'dart:html' show window;
 
 import 'package:firebase/firebase.dart' show auth, User;
 import 'package:flutter/material.dart';
 import 'package:notever/framework.dart';
 import 'package:notever/local.dart';
-import 'package:notever/widgets.dart' show ClippingList, ClippingListState;
+import 'package:notever/widgets.dart' show Login, ClippingList, ClippingListState;
 
 import 'package:notever/src/clippings/clipping.dart';
 
@@ -40,32 +39,39 @@ class _HomeScreenState extends State<HomeScreen> {
     Scaffold(
       appBar: AppBar(
         title: const Text('Notever'),
+        centerTitle: true,
         actions: <Widget>[
-          PopupMenuButton(
-            itemBuilder: _buildActions,
-            onSelected: _onAction,
+          if (currentUser != null) IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            tooltip: 'Logout',
+            onPressed: _onLogout,
           ),
         ],
       ),
-//      body: Center(
-//        child: Column(
-//          children: <Widget>[
-//            currentUser != null
-//              ? Text("Logged in user: [${currentUser.uid}] ${currentUser.displayName ?? ''} ${currentUser.email ?? ''}")
-//              : SizedBox(),
-//            const SizedBox(height: 12),
-//            ClippingList(key: clippingListKey),
-//          ],
-//        ),
-//      ),
       body: Container(
-        child: ClippingList(
-          key: clippingListKey,
-          onSelection: _onClippingSelected,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: const AssetImage(_BACKGROUND),
+            repeat: ImageRepeat.repeat,
+          ),
         ),
+        child: currentUser != null
+          ? ClippingList(
+            key: clippingListKey,
+            onSelection: _onClippingSelected,
+          )
+          : _buildLoginWidget(),
       ),
       floatingActionButton: _buildFab(),
     );
+
+  Widget _buildLoginWidget() => SingleChildScrollView(
+    child: Container(
+      alignment: Alignment.topCenter,
+      margin: const EdgeInsets.symmetric(vertical: 150),
+      child: Login(),
+    ),
+  );
 
   Widget _buildFab() => currentUser != null && selectedClippingIndex > -1
     ? FloatingActionButton(
@@ -74,44 +80,44 @@ class _HomeScreenState extends State<HomeScreen> {
     )
     : const SizedBox();
 
-  /// AppBar popup actions
-  List<PopupMenuEntry<int>> _buildActions(BuildContext context) {
-    final loggedIn = currentUser != null;
-    return loggedIn ? [
-      PopupMenuItem(
-        value: 10,
-        child: const Text('Logout'),
-      ),
-    ] : [
-      PopupMenuItem(
-        value: 0,
-        child: const Text('Evernote Login'),
-      ),
-      PopupMenuItem(
-        value: 1,
-        child: const Text('Yinxiang Login'),
-      ),
-    ];
-  }
+//  /// AppBar popup actions
+//  List<PopupMenuEntry<int>> _buildActions(BuildContext context) {
+//    final loggedIn = currentUser != null;
+//    return loggedIn ? [
+//      PopupMenuItem(
+//        value: 10,
+//        child: const Text('Logout'),
+//      ),
+//    ] : [
+//      PopupMenuItem(
+//        value: 0,
+//        child: const Text('Evernote Login'),
+//      ),
+//      PopupMenuItem(
+//        value: 1,
+//        child: const Text('Yinxiang Login'),
+//      ),
+//    ];
+//  }
 
-  /// When appbar action selected
-  void _onAction(int id) {
-    switch (id) {
-      case 0:
-        _onLogin();
-        break;
-      case 1:
-        _onLogin(true);
-        break;
-      case 10:
-        _onLogout();
-        break;
-    }
-  }
+//  /// When appbar action selected
+//  void _onAction(int id) {
+//    switch (id) {
+//      case 0:
+//        _onLogin();
+//        break;
+//      case 1:
+//        _onLogin(true);
+//        break;
+//      case 10:
+//        _onLogout();
+//        break;
+//    }
+//  }
 
-  void _onLogin([bool isYinxiang = false]) {
-    window.location.href = '${EvernoteConfig.funcPrefix}/${isYinxiang ? 'yinxiang' : 'evernote'}/';
-  }
+//  void _onLogin([bool isYinxiang = false]) {
+//    window.location.href = '${EvernoteConfig.funcPrefix}/${isYinxiang ? 'yinxiang' : 'evernote'}/';
+//  }
 
   void _onLogout() async {
     debugPrint('logout clicked... Firebase auth state: $currentUser');
@@ -153,3 +159,5 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 }
+
+const _BACKGROUND = 'assets/images/evernote_bg.png';

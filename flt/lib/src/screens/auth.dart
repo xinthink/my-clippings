@@ -23,39 +23,59 @@ class _AuthState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('Login'),
-    ),
-    body: Center(
-      child: Text('Logging in ... uid=${widget.uid ?? ''}'),
+    body: Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: const AssetImage(_BACKGROUND),
+          repeat: ImageRepeat.repeat,
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 150),
+      child: Container(
+        alignment: Alignment.topCenter,
+        child: const Card(
+          child: const Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 120, vertical: 30),
+            child: const Text('Just a second, processing...',
+              style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ),
+      ),
     ),
   );
 
   /// Retrieve customToken from backend
   void _requestToken() async {
-    if (widget.uid?.isNotEmpty != true) {
-      debugPrint('abort firebase auth: uid is empty');
-      return;
-    }
-
     try {
-      final doc = await firestore().collection('_t').doc(widget.uid).get();
-      if (!doc.exists) return debugPrint("abort firebase auth: token not found for uid=${widget.uid}");
-
-      final tokenInfo = doc.data();
-      _firebaseAuth(tokenInfo["customToken"]);
-    } catch (e, s) {
-      debugPrint("firebase auth failed: $e $s");
+      if (widget.uid?.isNotEmpty == true) {
+        await _firebaseAuth(widget.uid);
+      } else {
+        debugPrint('abort firebase auth: uid is empty');
+      }
+    } catch (e) {
+      debugPrint("firebase auth failed with $e");
+    } finally {
+      debugPrint("return to home screen");
+      Navigator.of(context).pop(); // always return to home screen
     }
   }
 
   /// Login using Firebase custom auth
-  Future _firebaseAuth(String customToken) async {
-    if (customToken?.isNotEmpty != true) throw Exception('token is empty');
+  Future _firebaseAuth(String uid) async {
+    final doc = await firestore().collection('_t').doc(uid).get();
+    if (!doc.exists) throw Exception("abort firebase auth: token not found for uid=$uid");
+
+    final customToken = doc.data()["customToken"];
+    if (customToken?.isNotEmpty != true) throw Exception('token is empty for uid=$uid');
 
     await auth().signInWithCustomToken(customToken);
     final user = auth().currentUser;
     debugPrint("firebase auth done! $user");
-    Navigator.of(context).pop();
   }
 }
+
+const _BACKGROUND = 'assets/images/evernote_bg.png';

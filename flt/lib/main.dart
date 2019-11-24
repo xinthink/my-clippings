@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 //import 'package:notever/local.dart' show FirebaseConfig;
-import 'package:notever/screens.dart';
+import 'package:notever/screens.dart' show HomeScreen, AuthScreen;
 
 void main() {
-  // local debugging only
-//  FirebaseConfig.initialize();
+//  FirebaseConfig.initialize(); // local debugging only
   runApp(MyApp());
 }
 
@@ -25,7 +24,6 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
         '/': (_) => HomeScreen(),
-        '/login': (_) => LoginScreen(),
       },
       onGenerateRoute: _generateRoute,
     );
