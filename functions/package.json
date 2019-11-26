@@ -5,7 +5,7 @@
     "build": "tsc",
     "clean": "rm -rf lib",
     "serve": "export GOOGLE_APPLICATION_CREDENTIALS=notever-firebase-adminsdk.json; export FIREBASE_CONFIG=notever-firebase-adminsdk.json; yarn lint && yarn build && firebase emulators:start --only functions,firestore",
-    "local-test": "export GOOGLE_APPLICATION_CREDENTIALS=notever-firebase-adminsdk.json; export FIREBASE_CONFIG=notever-firebase-adminsdk.json; yarn lint && yarn build && firebase emulators:exec 'node local-test.js' --only functions,firestore",
+    "local-test": "export GOOGLE_APPLICATION_CREDENTIALS=notever-firebase-adminsdk.json; export FIREBASE_CONFIG=notever-firebase-adminsdk.json; yarn lint && yarn build && firebase emulators:exec 'node lib/local-test.js' --only functions,firestore",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",
     "deploy": "yarn clean && yarn build && firebase deploy --only functions",

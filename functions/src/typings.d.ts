@@ -25,3 +25,8 @@ type AuthInfo = {
 };
 
 type NullableAuthInfo = AuthInfo | undefined | null;
+
+type NotesCreationAttrs = {
+  taskId: string,
+  createdAt?: string,
+};

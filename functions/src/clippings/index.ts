@@ -16,7 +16,7 @@ export const importClippings = functions
 /** Import clippings to user's Evernote account */
 async function doImportClippings(payload: ClippingsPayload, attrs: Attributes) {
   console.debug('message received', payload, attrs);
-  await createNotes(payload || {});
+  await createNotes(payload || {}, <NotesCreationAttrs>attrs);
 }
 
 // // local test only
