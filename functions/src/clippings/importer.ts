@@ -32,7 +32,7 @@ export async function createNotes({uid, clippings}: ClippingsPayload, attrs: Not
       succeed += 1;
     } catch (e) {
       failed += 1;
-      console.error('failed to create note', e);
+      console.error('failed to create note', c, e);
     } finally {
       await reportProgress(uid, total, attrs, succeed, failed);
     }

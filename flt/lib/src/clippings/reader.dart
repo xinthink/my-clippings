@@ -2,8 +2,8 @@ import 'dart:html' show File, FileReader;
 
 import 'package:flutter/foundation.dart';
 
-import 'clipping.dart';
-export 'clipping.dart';
+import '../models/clipping.dart';
+export '../models/clipping.dart';
 
 /// Read clippings from [file].
 Future<List<Clipping>> readClippings(File file) async {

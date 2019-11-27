@@ -6,7 +6,7 @@ import 'package:notever/framework.dart';
 import 'package:notever/local.dart';
 import 'package:notever/widgets.dart' show Login, ClippingList, ClippingListState;
 
-import 'package:notever/src/clippings/clipping.dart';
+import 'package:notever/src/models/clipping.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -16,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   User currentUser;
   int selectedClippingIndex;
+  bool isSyncing = false;
 
   final clippingListKey = GlobalKey<ClippingListState>();
   StreamSubscription authStateSub;
@@ -38,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) =>
     Scaffold(
       appBar: AppBar(
-        title: const Text('Notever'),
+        title: const Text('My Clippings'),
         centerTitle: true,
         actions: <Widget>[
           if (currentUser != null) IconButton(
@@ -73,59 +74,44 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   );
 
-  Widget _buildFab() => currentUser != null && selectedClippingIndex > -1
+  Widget _buildFab() => currentUser != null && selectedClippingIndex > -1 && !isSyncing
     ? FloatingActionButton(
       child: const Icon(Icons.cloud_upload),
       onPressed: _onSyncClippings,
     )
     : const SizedBox();
 
-//  /// AppBar popup actions
-//  List<PopupMenuEntry<int>> _buildActions(BuildContext context) {
-//    final loggedIn = currentUser != null;
-//    return loggedIn ? [
-//      PopupMenuItem(
-//        value: 10,
-//        child: const Text('Logout'),
-//      ),
-//    ] : [
-//      PopupMenuItem(
-//        value: 0,
-//        child: const Text('Evernote Login'),
-//      ),
-//      PopupMenuItem(
-//        value: 1,
-//        child: const Text('Yinxiang Login'),
-//      ),
-//    ];
-//  }
-
-//  /// When appbar action selected
-//  void _onAction(int id) {
-//    switch (id) {
-//      case 0:
-//        _onLogin();
-//        break;
-//      case 1:
-//        _onLogin(true);
-//        break;
-//      case 10:
-//        _onLogout();
-//        break;
-//    }
-//  }
-
-//  void _onLogin([bool isYinxiang = false]) {
-//    window.location.href = '${EvernoteConfig.funcPrefix}/${isYinxiang ? 'yinxiang' : 'evernote'}/';
-//  }
-
   void _onLogout() async {
     debugPrint('logout clicked... Firebase auth state: $currentUser');
-    await auth().signOut();
-    setState(() {
-      currentUser = null;
-      selectedClippingIndex = -1;
-    });
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Logout'),
+        content: const Text('Please confirm to logout.'),
+        actions: <Widget>[
+          FlatButton(
+            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+          FlatButton(
+            child: const Text('Confirm'),
+            onPressed: () => Navigator.of(context).pop(true),
+          )
+        ],
+      ),
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await auth().signOut();
+      setState(() {
+        currentUser = null;
+        selectedClippingIndex = -1;
+      });
+    } catch (e, s) {
+      debugPrint("firebase signOut failed: $e $s");
+    }
   }
 
   /// Firebase auth state listener
@@ -146,16 +132,48 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Start syncing clippings to Evernote
   void _onSyncClippings() async {
     final clippings = clippingListKey.currentState?.unsyncedClippings;
-    if (clippings?.isNotEmpty != true) return;
+    if (isSyncing || clippings?.isNotEmpty != true) return;
+
+    final message = """Are sure to import all clippings newer than your selection into your Evernote account?
+${clippings.length} notes will be created.
+
+Please confirm to continue.
+""";
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Sync Clippings'),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(
+            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+          FlatButton(
+            child: const Text('Continue'),
+            onPressed: () => Navigator.of(context).pop(true),
+          )
+        ],
+      ),
+    );
+    if (!confirmed) return;
 
     try {
+      setState(() {
+        isSyncing = true;
+      });
       final uri = '${EvernoteConfig.funcPrefix}/import.json';
       await postJson(uri, body: {
         'uid': currentUser.uid,
         'clippings': Clipping.clippingsToJson(clippings),
       });
+      Navigator.of(context).pushNamed('/jobs', arguments: currentUser.uid);
     } catch (e) {
       debugPrint('sync clippings request rejected: $e');
+    } finally {
+      setState(() {
+        isSyncing = false;
+      });
     }
   }
 }

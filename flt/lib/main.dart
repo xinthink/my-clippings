@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 //import 'package:notever/local.dart' show FirebaseConfig;
-import 'package:notever/screens.dart' show HomeScreen, AuthScreen;
+import 'package:notever/screens.dart' show HomeScreen, AuthScreen, JobsScreen;
 
 void main() {
 //  FirebaseConfig.initialize(); // local debugging only
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Notever - sync your kindle clippings',
+      title: 'My Clippings - sync your kindle clippings',
       theme: Theme.of(context).copyWith(
         brightness: Brightness.dark,
         primaryColor: Colors.green.shade900,
@@ -38,7 +38,8 @@ class MyApp extends StatelessWidget {
     switch (path) {
       case '/auth':
         return _createRoute(settings, (_) => AuthScreen(uid: q['uid']));
-        break;
+      case '/jobs':
+        return _createRoute(settings, (_) => JobsScreen(uid: settings.arguments));
       default:
         return null;
     }

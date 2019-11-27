@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:notever/src/clippings/clipping.dart';
+import 'package:notever/src/models/clipping.dart';
 
 void main() {
 //  test('parse clippings from text', () {

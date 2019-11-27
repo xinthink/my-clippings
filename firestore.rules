@@ -3,6 +3,9 @@ service cloud.firestore {
     match /_t/{document=**} {
       allow read;
     }
+    match /_jobs/{document=**} {
+      allow read;
+    }
     match /{document=**} {
       allow read, write: if false;
     }

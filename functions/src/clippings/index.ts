@@ -9,6 +9,9 @@ import { createNotes } from './importer';
 
 // Clippings sync task, triggered by PubSub message
 export const importClippings = functions
+  .runWith({
+    timeoutSeconds: 540,
+  })
   .region('asia-northeast1')
   .pubsub.topic(config.pubsub.importTopic)
   .onPublish(msg => doImportClippings(msg.json, msg.attributes));

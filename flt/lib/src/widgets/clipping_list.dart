@@ -45,38 +45,75 @@ class ClippingListState extends State<ClippingList> {
   @override
   Widget build(BuildContext context) => _clippings.isNotEmpty
     ? ListView.builder(
-      itemCount: _clippings.length,
-      itemBuilder: _buildClipping,
+      itemCount: _clippings.length + 1,
+      itemBuilder: (_, i) => i == 0 ? _buildTips() : _buildClipping(i - 1),
     )
     : _buildUploader();
 
+  /// Tips to choose clippings for syncing
+  Widget _buildTips() => Container(
+    margin: const EdgeInsets.only(left: 80, right: 80, top: 36, bottom: 0),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+    child: const Text('Select a clipping below, so that only clippings newer than it (including itself) will be imported into your Evernote notebook.',
+      style: const TextStyle(
+        color: Colors.black54,
+        fontSize: 16,
+      ),
+    ),
+  );
+
   /// render a single [Clipping]
-  Widget _buildClipping(BuildContext context, int i) {
+  Widget _buildClipping(int i) {
     final c = _clippings[i];
-    final atTop = i == 0;
     final atBottom = i == _clippings.length - 1;
     return Card(
-      margin: EdgeInsets.only(left: 80, right: 80,
-        top: atTop ? 32 : 10,
+      margin: EdgeInsets.only(left: 80, right: 80, top: 10,
         bottom: atBottom ? 32 : 10,
       ),
       child: ListTile(
-        title: Text(c.text),
+        title: Text("${c.meta}\n\n${c.text}\n\n"),
         subtitle: Text("${c.book} (${c.author})"),
         selected: i == _selectedIndex,
         onTap: () => _onClippingSelected(i),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
       ),
     );
   }
 
-  Widget _buildUploader() => Container(
-    margin: const EdgeInsets.symmetric(horizontal: 120, vertical: 80),
-    child: RaisedButton(
-      child: const ListTile(
-        leading: const Icon(Icons.file_upload),
-        title: const Text('Upload My Clippings.txt'),
+  Widget _buildUploader() => Container( // a container with full width
+    alignment: Alignment.topCenter,
+    child: Container( // and then a smaller container
+      constraints: const BoxConstraints(maxWidth: 512),
+      margin: const EdgeInsets.symmetric(vertical: 150),
+      padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 36),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          RaisedButton(
+            child: const ListTile(
+              leading: const Icon(Icons.file_upload),
+              title: const Text('Upload My Clippings.txt'),
+            ),
+            onPressed: _onPickFile,
+          ),
+          const SizedBox(height: 40),
+          _buildUploadTips('1. Connect your Kindle to your computer with USB cable'),
+          _buildUploadTips('2. Click the above button'),
+          _buildUploadTips("3. Navigate to Kindle's storage, choose the 'My Clippings.txt' file under 'documents' folder"),
+          const SizedBox(height: 20),
+        ],
       ),
-      onPressed: _onPickFile,
+    ),
+  );
+
+  Widget _buildUploadTips(String text) => Container(
+    margin: const EdgeInsets.symmetric(vertical: 4),
+    child: Text(
+      text,
+      style: const TextStyle(
+        fontSize: 14,
+        color: Colors.black45,
+      ),
     ),
   );
 
