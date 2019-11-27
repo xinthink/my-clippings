@@ -53,5 +53,5 @@ cd functions && yarn deploy
 [Cloud Functions Execution Timeout]: https://cloud.google.com/functions/docs/concepts/exec#timeout
 [cloud functions get-started]: https://firebase.google.com/docs/functions/get-started
 [Evernote Developer]: https://dev.evernote.com/doc/
-[local.ts template]: https://github.com/xinthink/my-clippings/tree/master/functions/local.ts
-[local.dart template]: https://github.com/xinthink/my-clippings/tree/master/functions/local.dart
+[local.ts template]: https://github.com/xinthink/my-clippings/tree/master/templates/local.ts
+[local.dart template]: https://github.com/xinthink/my-clippings/tree/master/templates/local.dart
