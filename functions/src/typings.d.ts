@@ -11,6 +11,7 @@ type Clipping = {
   timestamp: string,
   book: string,
   author: string,
+  meta: string,
 };
 
 type ClippingsPayload = {

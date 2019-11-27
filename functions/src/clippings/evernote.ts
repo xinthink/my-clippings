@@ -24,11 +24,13 @@ export default class EvernoteTool {
   /** Create a note from the given clipping */
   async createNote(clipping: Clipping) {
     const note = new Types.Note({
-      title: `${clipping.book} reading notes`,
+      title: `${clipping.book}`,
       tagNames: normalizeTags(['Kindle', clipping.book, clipping.author]),
       content: `<?xml version="1.0" encoding="UTF-8"?>
       <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
       <en-note>
+        <p>${xcape(clipping.meta)}</p>
+        <br/>
         <p>${normalizeNoteText(xcape(clipping.text))}</p>
         <br/>
         <p>${xcape(clipping.book)} ${xcape(clipping.author)}</p>
@@ -53,5 +55,5 @@ function normalizeTags(tags: string[]): string[] {
 }
 
 function normalizeNoteText(text: string): string {
-  return text.replace(/[\r\n]+/g, '<br/>');
+  return text.replace(/(\r?\n)/g, '<br/>');
 }
