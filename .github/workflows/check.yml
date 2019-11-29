@@ -23,7 +23,8 @@ jobs:
         git clone https://github.com/nodenv/nodenv.git ~/.nodenv
         echo 'export PATH="$HOME/.nodenv/bin:/usr/local/bin:/usr/bin:/bin:$PATH"' >> ~/.bashrc
         echo 'eval "$(nodenv init -)"' >> ~/.bashrc
-        nodenv init
+        echo "PATH=$PATH" && ls -lh ~/.nodenv/bin/
+        ~/.nodenv/bin/nodenv init
         # curl -fsSL https://github.com/nodenv/nodenv-installer/raw/master/bin/nodenv-doctor | bash
         nodenv install 8.16.0 && cd functions && nodenv local 8.16.0
     - name: install yarn & dependencies
