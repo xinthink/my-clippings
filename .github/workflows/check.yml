@@ -16,18 +16,18 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: 10.x
-    - name: setup nodenv & yarn
+    - name: setup nodenv
       run: |
-        # install nodenv
         git clone https://github.com/nodenv/nodenv.git ~/.nodenv
         echo 'export PATH="$HOME/.nodenv/bin:/usr/local/bin:/usr/bin:/bin:$PATH"' >> ~/.bashrc
         echo 'eval "$(nodenv init -)"' >> ~/.bashrc
-        source ~/.bashrc && echo "$PATH"
+        tail ~/.bashrc && source ~/.bashrc && echo "PATH=$PATH"
         # curl -fsSL https://github.com/nodenv/nodenv-installer/raw/master/bin/nodenv-doctor | bash
-        nodenv install 8.16.0 && $(cd functions && nodenv local 8.16.0)
-        # install yarn & dependencies
-        npm install -g yarn && yarn install
-        cd functions && yarn install
+        nodenv install 8.16.0 && cd functions && nodenv local 8.16.0
+    - name: install yarn & dependencies
+        run: echo "PATH=$PATH"
+        # npm install -g yarn && yarn install
+        # cd functions && yarn install
     - name: setup configuration files
       run: |
         echo "${{ secrets.LocalDart }}" | base64 --decode > flt/lib/local.dart
@@ -35,7 +35,8 @@ jobs:
     - name: flutter test
       run: cd flt; flutter analyze; flutter test
     - name: build Cloud Functions
-      run: echo "$PATH"; cd functions; yarn lint; yarn build
+      run: echo "PATH=$PATH"
+      # ; cd functions; yarn lint; yarn build
     - name: notification
       if: cancelled() == false
       uses: xinthink/action-telegram@v1
