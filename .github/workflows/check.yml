@@ -17,7 +17,8 @@ jobs:
       with:
         node-version: 10.x
     - run: |
-        npx @nodenv/nodenv-installer && nodenv init && nodenv install 8.16.0
+        npx @nodenv/nodenv-installer && export PATH=~/.nodenv/bin:$PATH
+        nodenv init && nodenv install 8.16.0
         npm install -g yarn && yarn install
         cd functions && nodenv local 8.16.0 && yarn install
     - name: setup configuration files
@@ -27,4 +28,13 @@ jobs:
     - name: flutter test
       run: cd flt; flutter analyze; flutter test
     - name: build Cloud Functions
-      run: nodenv init; cd functions; yarn lint; yarn build
+      run: |
+        export PATH=~/.nodenv/bin:$PATH && nodenv init
+        cd functions; yarn lint; yarn build
+    - name: notification
+      if: cancelled() == false
+      uses: xinthink/action-telegram@v1
+      with:
+        botToken: ${{ secrets.TelegramBotToken }}
+        chatId: ${{ secrets.TelegramTarget }}
+        jobStatus: ${{ job.status }}
