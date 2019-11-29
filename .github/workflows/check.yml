@@ -30,8 +30,8 @@ jobs:
     #     # nodenv init && cd functions && nodenv local 8.16.0 && yarn install
     - name: setup configuration files
       run: |
-        echo "${{ secrets.LocalDart }}" > flt/lib/local.dart
-        echo "${{ secrets.LocalTs }}" > functions/src/local.ts
+        echo "${{ secrets.LocalDart }}" | base64 --decode > flt/lib/local.dart
+        echo "${{ secrets.LocalTs }}" | base64 --decode > functions/src/local.ts
     - name: flutter test
       run: cd flt; flutter analyze; flutter test
     # - name: build Cloud Functions
