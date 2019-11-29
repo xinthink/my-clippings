@@ -1,5 +1,8 @@
 # My Clippings - save Kindle clippings in Evernote
 
+[![Check Status][check-badge]][github-runs]
+[![MIT][license-badge]][license]
+
 > **Demonstration Only** for now, see Limitations
 
 Frontend for this app is built with [Flutter Web], hosted on [Firebase][Firebase Hosting], with [Cloud Functions] + [Cloud Firestore] as backend.
@@ -43,6 +46,8 @@ cd functions && yarn deploy
 ```
 
 
+[check-badge]: https://github.com/xinthink/my-clippings/workflows/Check/badge.svg
+[github-runs]: https://github.com/xinthink/my-clippings/actions
 [license-badge]: https://img.shields.io/github/license/xinthink/my-clippings
 [license]: https://raw.githubusercontent.com/xinthink/my-clippings/master/LICENSE
 [Flutter Web]: https://flutter.dev/web
