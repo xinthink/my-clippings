@@ -1,5 +1,5 @@
 const config = {
-  host: <site-url>,
+  host: '<site-url>',
   oauth_redirect: '<functions-domain>/auth/result',
   func_host: '<functions-domain>',
   evernote_host: 'www.evernote.com',
@@ -12,8 +12,8 @@ const evernoteConfig = {
   requestTokenURL: `https://${config.evernote_host}/oauth`,
   accessTokenURL: `https://${config.evernote_host}/oauth`,
   userAuthorizationURL: `https://${config.evernote_host}/OAuth.action`,
-  consumerKey: <evernote-consumer-key>,
-  consumerSecret: <evernote-consumer-secret>,
+  consumerKey: '<evernote-consumer-key>',
+  consumerSecret: '<evernote-consumer-secret>',
   callbackURL: `${config.func_host}/auth/evernote/callback/`,
 };
 
@@ -25,8 +25,8 @@ const yinxiangConfig = {
   requestTokenURL: `https://${config.yinxiang_host}/oauth`,
   accessTokenURL: `https://${config.yinxiang_host}/oauth`,
   userAuthorizationURL: `https://${config.yinxiang_host}/OAuth.action`,
-  consumerKey: <yxbj-consumer-key>,
-  consumerSecret: <yxbj-consumer-secret>,
+  consumerKey: '<yxbj-consumer-key>',
+  consumerSecret: '<yxbj-consumer-secret>',
   callbackURL: `${config.func_host}/auth/yinxiang/callback/`,
 };
 

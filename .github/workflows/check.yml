@@ -1,0 +1,35 @@
+name: Check
+
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: subosito/flutter-action@v1
+      with:
+        channel: dev
+    - run: |
+        flutter --version
+        flutter config --enable-web
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 8.x
+    - run: |
+        npm install -g yarn
+        yarn install && cd function yarn install
+    - name: setup configuration files
+      run: |
+        echo "${{ secrets.LocalDart }}" > flt/lib/local.dart
+        echo "${{ secrets.LocalTs }}" > functions/src/local.ts
+    - name: flutter test
+      run: |
+        cd flt
+        flutter analyze
+        flutter test
+    - name: build Cloud Functions
+      run: |
+        cd functions
+        yarn lint
+        yarn build
