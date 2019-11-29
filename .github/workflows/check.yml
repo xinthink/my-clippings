@@ -13,21 +13,21 @@ jobs:
     - run: |
         flutter --version
         flutter config --enable-web
-    - uses: actions/setup-node@v1
-      with:
-        node-version: 10.x
-    - name: setup nodenv & yarn
-      env:
-        PATH: ~/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH
-      run: |
-        echo "PATH=$PATH" && ls -lh
-        npx @nodenv/nodenv-installer
-        echo 'export PATH="~/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH"' >> ~/.bashrc
-        echo 'eval "$(nodenv init -)"' >> ~/.bashrc
-        echo "PATH=$PATH" && ls -lha ~/.nodenv && ls -lha ~/.nodenv/bin
-        # nodenv init && nodenv install 8.16.0
-        # npm install -g yarn && yarn install
-        # nodenv init && cd functions && nodenv local 8.16.0 && yarn install
+    # - uses: actions/setup-node@v1
+    #   with:
+    #     node-version: 10.x
+    # - name: setup nodenv & yarn
+    #   env:
+    #     PATH: ~/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH
+    #   run: |
+    #     echo "PATH=$PATH" && ls -lh
+    #     npx @nodenv/nodenv-installer
+    #     echo 'export PATH="~/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH"' >> ~/.bashrc
+    #     echo 'eval "$(nodenv init -)"' >> ~/.bashrc
+    #     echo "PATH=$PATH" && ls -lha ~/.nodenv && ls -lha ~/.nodenv/bin
+    #     # nodenv init && nodenv install 8.16.0
+    #     # npm install -g yarn && yarn install
+    #     # nodenv init && cd functions && nodenv local 8.16.0 && yarn install
     - name: setup configuration files
       run: |
         echo "${{ secrets.LocalDart }}" > flt/lib/local.dart
