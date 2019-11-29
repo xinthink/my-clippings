@@ -17,14 +17,15 @@ jobs:
       with:
         node-version: 10.x
     - name: setup nodenv
-      env:
-        PATH: $HOME/.nodenv/bin:$HOME/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH
+      # env:
+      #   PATH: $HOME/.nodenv/bin:$HOME/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH
       run: |
         git clone https://github.com/nodenv/nodenv.git ~/.nodenv
         echo 'export PATH="$HOME/.nodenv/bin:/usr/local/bin:/usr/bin:/bin:$PATH"' >> ~/.bashrc
         echo 'eval "$(nodenv init -)"' >> ~/.bashrc
+        export PATH="$HOME/.nodenv/bin:$HOME/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH"
         echo "PATH=$PATH" && ls -lh ~/.nodenv/bin/
-        ~/.nodenv/bin/nodenv init
+        nodenv init
         # curl -fsSL https://github.com/nodenv/nodenv-installer/raw/master/bin/nodenv-doctor | bash
         nodenv install 8.16.0 && cd functions && nodenv local 8.16.0
     - name: install yarn & dependencies
