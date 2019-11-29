@@ -15,23 +15,16 @@ jobs:
         flutter config --enable-web
     - uses: actions/setup-node@v1
       with:
-        node-version: 8.x
+        node-version: 10.x
     - run: |
-        # npm install -g yarn
-        curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-        echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-        yarn install && cd function yarn install
+        npx @nodenv/nodenv-installer && nodenv init && nodenv install 8.16.0
+        npm install -g yarn && yarn install
+        cd functions && nodenv local 8.16.0 && yarn install
     - name: setup configuration files
       run: |
         echo "${{ secrets.LocalDart }}" > flt/lib/local.dart
         echo "${{ secrets.LocalTs }}" > functions/src/local.ts
     - name: flutter test
-      run: |
-        cd flt
-        flutter analyze
-        flutter test
+      run: cd flt; flutter analyze; flutter test
     - name: build Cloud Functions
-      run: |
-        cd functions
-        yarn lint
-        yarn build
+      run: nodenv init; cd functions; yarn lint; yarn build
