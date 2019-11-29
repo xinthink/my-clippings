@@ -18,10 +18,10 @@ jobs:
         node-version: 10.x
     - name: setup nodenv & yarn
       env:
-        PATH: ～/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH
+        PATH: ~/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH
       run: |
         npx @nodenv/nodenv-installer
-        echo 'export PATH="～/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH"' >> ~/.bashrc
+        echo 'export PATH="~/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH"' >> ~/.bashrc
         echo 'eval "$(nodenv init -)"' >> ~/.bashrc
         nodenv init && nodenv install 8.16.0
         npm install -g yarn && yarn install
