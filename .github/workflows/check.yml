@@ -20,21 +20,22 @@ jobs:
       env:
         PATH: ~/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH
       run: |
-        echo "PATH=$PATH"
+        echo "PATH=$PATH" && ls -lh
         npx @nodenv/nodenv-installer
         echo 'export PATH="~/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH"' >> ~/.bashrc
         echo 'eval "$(nodenv init -)"' >> ~/.bashrc
-        nodenv init && nodenv install 8.16.0
-        npm install -g yarn && yarn install
-        nodenv init && cd functions && nodenv local 8.16.0 && yarn install
+        echo "PATH=$PATH" && ls -lha ~/.nodenv && ls -lha ~/.nodenv/bin
+        # nodenv init && nodenv install 8.16.0
+        # npm install -g yarn && yarn install
+        # nodenv init && cd functions && nodenv local 8.16.0 && yarn install
     - name: setup configuration files
       run: |
         echo "${{ secrets.LocalDart }}" > flt/lib/local.dart
         echo "${{ secrets.LocalTs }}" > functions/src/local.ts
     - name: flutter test
       run: cd flt; flutter analyze; flutter test
-    - name: build Cloud Functions
-      run: cd functions; yarn lint; yarn build
+    # - name: build Cloud Functions
+    #   run: cd functions; yarn lint; yarn build
     - name: notification
       if: cancelled() == false
       uses: xinthink/action-telegram@v1
