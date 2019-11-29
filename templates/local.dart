@@ -1,5 +1,4 @@
 import 'package:firebase/firebase.dart';
-import 'package:firebase/firestore.dart';
 
 class FirebaseConfig {
   // copied from firebase app settings
@@ -13,7 +12,7 @@ class FirebaseConfig {
   static const measurementId = "...";
 
   static void initialize() {
-    /*final app =*/ initializeApp(
+    initializeApp(
       apiKey: apiKey,
       authDomain: authDomain,
       databaseURL: databaseURL,
@@ -21,10 +20,6 @@ class FirebaseConfig {
       storageBucket: storageBucket,
       messagingSenderId: messagingSenderId,
     );
-//    app.firestore().settings(Settings(
-//      host: 'http://localhost:5005', // not yet supported
-//      ssl: false,
-//    ));
   }
 }
 

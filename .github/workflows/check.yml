@@ -25,7 +25,7 @@ jobs:
         # curl -fsSL https://github.com/nodenv/nodenv-installer/raw/master/bin/nodenv-doctor | bash
         nodenv install 8.16.0 && cd functions && nodenv local 8.16.0
     - name: install yarn & dependencies
-        run: echo "PATH=$PATH"
+      run: echo "PATH=$PATH"
         # npm install -g yarn && yarn install
         # cd functions && yarn install
     - name: setup configuration files
