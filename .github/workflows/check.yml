@@ -20,6 +20,7 @@ jobs:
       env:
         PATH: ~/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH
       run: |
+        echo "PATH=$PATH"
         npx @nodenv/nodenv-installer
         echo 'export PATH="~/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH"' >> ~/.bashrc
         echo 'eval "$(nodenv init -)"' >> ~/.bashrc
