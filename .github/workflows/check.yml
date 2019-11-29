@@ -13,29 +13,29 @@ jobs:
     - run: |
         flutter --version
         flutter config --enable-web
-    # - uses: actions/setup-node@v1
-    #   with:
-    #     node-version: 10.x
-    # - name: setup nodenv & yarn
-    #   env:
-    #     PATH: ~/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH
-    #   run: |
-    #     echo "PATH=$PATH" && ls -lh
-    #     npx @nodenv/nodenv-installer
-    #     echo 'export PATH="~/.nodenv/bin:~/.nodenv/shims:/usr/local/bin:/usr/bin:/bin:$PATH"' >> ~/.bashrc
-    #     echo 'eval "$(nodenv init -)"' >> ~/.bashrc
-    #     echo "PATH=$PATH" && ls -lha ~/.nodenv && ls -lha ~/.nodenv/bin
-    #     # nodenv init && nodenv install 8.16.0
-    #     # npm install -g yarn && yarn install
-    #     # nodenv init && cd functions && nodenv local 8.16.0 && yarn install
+    - uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    - name: setup nodenv & yarn
+      run: |
+        # install nodenv
+        git clone https://github.com/nodenv/nodenv.git ~/.nodenv
+        echo 'export PATH="$HOME/.nodenv/bin:/usr/local/bin:/usr/bin:/bin:$PATH"' >> ~/.bashrc
+        echo 'eval "$(nodenv init -)"' >> ~/.bashrc
+        source ~/.bashrc && echo "$PATH"
+        # curl -fsSL https://github.com/nodenv/nodenv-installer/raw/master/bin/nodenv-doctor | bash
+        nodenv install 8.16.0 && $(cd functions && nodenv local 8.16.0)
+        # install yarn & dependencies
+        npm install -g yarn && yarn install
+        cd functions && yarn install
     - name: setup configuration files
       run: |
         echo "${{ secrets.LocalDart }}" | base64 --decode > flt/lib/local.dart
         echo "${{ secrets.LocalTs }}" | base64 --decode > functions/src/local.ts
     - name: flutter test
       run: cd flt; flutter analyze; flutter test
-    # - name: build Cloud Functions
-    #   run: cd functions; yarn lint; yarn build
+    - name: build Cloud Functions
+      run: echo "$PATH"; cd functions; yarn lint; yarn build
     - name: notification
       if: cancelled() == false
       uses: xinthink/action-telegram@v1
