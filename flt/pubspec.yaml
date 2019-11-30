@@ -27,6 +27,7 @@ dependencies:
   firebase: ^6.0.0
   http:
   intl:
+  uuid:
 
 dev_dependencies:
   flutter_test:

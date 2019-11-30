@@ -15,6 +15,8 @@ type Clipping = {
 };
 
 type ClippingsPayload = {
+  taskId: string,
+  batch: number,
   uid: string,
   clippings: Array<Clipping>,
 };
@@ -29,5 +31,6 @@ type NullableAuthInfo = AuthInfo | undefined | null;
 
 type NotesCreationAttrs = {
   taskId: string,
+  batch: string,
   createdAt?: string,
 };

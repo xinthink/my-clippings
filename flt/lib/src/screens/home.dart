@@ -2,11 +2,7 @@ import 'dart:async' show StreamSubscription;
 
 import 'package:firebase/firebase.dart' show auth, User;
 import 'package:flutter/material.dart';
-import 'package:notever/framework.dart';
-import 'package:notever/local.dart';
-import 'package:notever/widgets.dart' show Login, ClippingList, ClippingListState;
-
-import 'package:notever/src/models/clipping.dart';
+import 'package:notever/widgets.dart' show Login, ClippingList, ClippingListState, ClippingUploaderFab;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -16,7 +12,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   User currentUser;
   int selectedClippingIndex;
-  bool isSyncing = false;
+
+  /// if clippings is being uploaded
+  bool isUploading = false;
 
   final clippingListKey = GlobalKey<ClippingListState>();
   StreamSubscription authStateSub;
@@ -62,6 +60,10 @@ class _HomeScreenState extends State<HomeScreen> {
             onSelection: _onClippingSelected,
           )
           : _buildLoginWidget(),
+//        child: ClippingList(
+//          key: clippingListKey,
+//          onSelection: _onClippingSelected,
+//        ),
       ),
       floatingActionButton: _buildFab(),
     );
@@ -74,10 +76,10 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   );
 
-  Widget _buildFab() => currentUser != null && selectedClippingIndex > -1 && !isSyncing
-    ? FloatingActionButton(
-      child: const Icon(Icons.cloud_upload),
-      onPressed: _onSyncClippings,
+  Widget _buildFab() => currentUser != null && selectedClippingIndex > -1
+    ? ClippingUploaderFab(
+      clippings: clippingListKey.currentState?.unsyncedClippings,
+      onComplete: _onClippingsUploaded,
     )
     : const SizedBox();
 
@@ -129,52 +131,9 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  /// Start syncing clippings to Evernote
-  void _onSyncClippings() async {
-    final clippings = clippingListKey.currentState?.unsyncedClippings;
-    if (isSyncing || clippings?.isNotEmpty != true) return;
-
-    final message = """Are sure to import all clippings newer than your selection into your Evernote account?
-${clippings.length} notes will be created.
-
-Please confirm to continue.
-""";
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Sync Clippings'),
-        content: Text(message),
-        actions: <Widget>[
-          FlatButton(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(false),
-          ),
-          FlatButton(
-            child: const Text('Continue'),
-            onPressed: () => Navigator.of(context).pop(true),
-          )
-        ],
-      ),
-    );
-    if (!confirmed) return;
-
-    try {
-      setState(() {
-        isSyncing = true;
-      });
-      final uri = '${EvernoteConfig.funcPrefix}/import.json';
-      await postJson(uri, body: {
-        'uid': currentUser.uid,
-        'clippings': Clipping.clippingsToJson(clippings),
-      });
-      Navigator.of(context).pushNamed('/jobs', arguments: currentUser.uid);
-    } catch (e) {
-      debugPrint('sync clippings request rejected: $e');
-    } finally {
-      setState(() {
-        isSyncing = false;
-      });
-    }
+  /// When clippings upload is complete
+  void _onClippingsUploaded() async {
+    Navigator.of(context).pushNamed('/jobs', arguments: currentUser.uid);
   }
 }
 

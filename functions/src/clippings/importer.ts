@@ -24,7 +24,7 @@ export async function createNotes({uid, clippings}: ClippingsPayload, attrs: Not
   let succeed = 0;
   let failed = 0;
 
-  console.log(`start creating ${total} notes... taskId=${attrs.taskId}`);
+  console.log(`start creating ${total} notes... task=${attrs.taskId}:${attrs.batch}`);
   await reportProgress(uid, total, attrs);
   for (const c of clippings) {
     try {
@@ -52,17 +52,20 @@ async function loadAuthInfo(uid: string): Promise<NullableAuthInfo> {
 async function reportProgress(
   uid: string,
   total: number,
-  attrs: NotesCreationAttrs,
+  { taskId, batch }: NotesCreationAttrs,
   succeed: number = 0,
   failed: number = 0,
 ) {
-  const key = `${uid}:${attrs.taskId}`;
+  const key = `${uid}:${taskId}`;
+  const ref = admin.firestore()
+    .collection('_jobs')
+    .doc(key)
+    .collection('batches')
+    .doc(batch);
 
   if (succeed === 0 && failed === 0 && total > 0) {
-    await admin.firestore()
-      .collection('_jobs')
-      .doc(key)
-      .set({
+    // create new record
+    await ref.set({
         uid,
         total,
         succeed,
@@ -73,6 +76,7 @@ async function reportProgress(
     return;
   }
 
+  // update existed record
   const updates: { [key: string]: any } = {
     'total': total,
     'succeed': succeed,
@@ -83,9 +87,6 @@ async function reportProgress(
     updates['finishedAt'] = Date.now();
   }
 
-  await admin.firestore()
-    .collection('_jobs')
-    .doc(key)
-    .update(updates)
+  await ref.update(updates)
     .catch(console.error);
 }

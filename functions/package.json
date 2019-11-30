@@ -30,7 +30,6 @@
     "passport-evernote": "^1.0.1",
     "q": "^1.5.1",
     "ramda": "^0.26.1",
-    "uuid": "^3.3.3",
     "xml-escape": "^1.1.0"
   },
   "devDependencies": {

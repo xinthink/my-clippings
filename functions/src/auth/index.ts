@@ -9,7 +9,6 @@ import * as morgan from 'morgan';
 import * as passport from 'passport';
 import { Strategy as EvernoteStrategy } from 'passport-evernote';
 import { assoc, partial } from 'ramda';
-import * as uuid from 'uuid/v4';
 
 import config from '../local';
 import { FireSessionStore } from './FireSessionStore';
@@ -127,7 +126,8 @@ authApp.post('/import.json', (req, res) => {
   const pubsub = new PubSub();
   pubsub.topic(config.pubsub.importTopic)
     .publishJSON(req.body, {
-      taskId: uuid(),
+      taskId: req.body.taskId,
+      batch: `${req.body.batch || ''}`,
       createdAt: `${Date.now()}`,
     })
     .then(mid => {
