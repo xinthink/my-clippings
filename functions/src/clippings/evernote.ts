@@ -1,7 +1,7 @@
 import * as Evernote from 'evernote';
 import xcape = require("xml-escape");
 
-const { Types } = Evernote;
+const { Limits, Types } = Evernote;
 
 // type EvernoteAuth = {
 //   provider: string,
@@ -24,7 +24,7 @@ export default class EvernoteTool {
   /** Create a note from the given clipping */
   async createNote(clipping: Clipping) {
     const note = new Types.Note({
-      title: `${clipping.book}`,
+      title: normalizeNoteTitle(clipping.book),
       tagNames: normalizeTags(['Kindle', clipping.book, clipping.author]),
       content: `<?xml version="1.0" encoding="UTF-8"?>
       <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
@@ -47,13 +47,24 @@ export default class EvernoteTool {
 // }
 
 function normalizeTags(tags: string[]): string[] {
-  return tags.map(t => {
-    let tag = t.replace(/,/g, ' ');
-    tag = tag.replace(/\s+/g, ' ');
-    return tag;
-  });
+  return tags
+    .filter(t => t.match(Limits.EDAM_TAG_NAME_REGEX))
+    .map(t => {
+      let tag = t.replace(/,/g, ' ');
+      tag = tag.replace(/\s+/g, ' ');
+      if (tag.length > Limits.EDAM_TAG_NAME_LEN_MAX) {
+        tag = tag.slice(0, Limits.EDAM_TAG_NAME_LEN_MAX - 1) + '…';
+      }
+      return tag;
+    });
 }
 
 function normalizeNoteText(text: string): string {
   return text.replace(/(\r?\n)/g, '<br/>');
+}
+
+function normalizeNoteTitle(title: string): string {
+  if (!title.match(Limits.EDAM_NOTE_TITLE_REGEX)) return "Untitled";
+  else return title.length <= Limits.EDAM_NOTE_TITLE_LEN_MAX ? title
+    : title.slice(0, Limits.EDAM_NOTE_TITLE_LEN_MAX - 1) + '…';
 }
