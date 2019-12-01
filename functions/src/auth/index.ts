@@ -127,7 +127,7 @@ authApp.post('/import.json', (req, res) => {
   pubsub.topic(config.pubsub.importTopic)
     .publishJSON(req.body, {
       taskId: req.body.taskId,
-      batch: `${req.body.batch || ''}`,
+      batch: `${req.body.batch}`,
       createdAt: `${Date.now()}`,
     })
     .then(mid => {

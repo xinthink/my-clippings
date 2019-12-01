@@ -134,6 +134,9 @@ class _HomeScreenState extends State<HomeScreen> {
   /// When clippings upload is complete
   void _onClippingsUploaded(String taskId) async {
     Navigator.of(context).pushNamed('/jobs', arguments: '${currentUser.uid}:$taskId');
+    setState(() {
+      selectedClippingIndex = -1;
+    });
   }
 }
 

@@ -5,7 +5,7 @@
     "build": "tsc",
     "clean": "rm -rf lib",
     "serve": "export GOOGLE_APPLICATION_CREDENTIALS=notever-firebase-adminsdk.json; export FIREBASE_CONFIG=notever-firebase-adminsdk.json; yarn lint && yarn build && firebase emulators:start --only functions,firestore",
-    "local-test": "export GOOGLE_APPLICATION_CREDENTIALS=notever-firebase-adminsdk.json; export FIREBASE_CONFIG=notever-firebase-adminsdk.json; yarn lint && yarn build && firebase emulators:exec 'node lib/local-test.js' --only functions,firestore",
+    "local-test": "export GOOGLE_APPLICATION_CREDENTIALS=notever-firebase-adminsdk.json; export FIREBASE_CONFIG=notever-firebase-adminsdk.json; yarn lint && yarn build && firebase emulators:exec 'node local-test.js' --only functions,firestore",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",
     "deploy": "yarn clean && yarn build && firebase deploy --only functions",
@@ -30,7 +30,8 @@
     "passport-evernote": "^1.0.1",
     "q": "^1.5.1",
     "ramda": "^0.26.1",
-    "xml-escape": "^1.1.0"
+    "xml-escape": "^1.1.0",
+    "xregexp": "^4.2.4"
   },
   "devDependencies": {
     "@firebase/app-types": "^0.4.7",
@@ -44,6 +45,7 @@
     "@types/thrift": "^0.10.8",
     "@types/uuid": "^3.4.6",
     "@types/xml-escape": "^1.1.0",
+    "@types/xregexp": "^3.0.30",
     "firebase-functions-test": "^0.1.6",
     "firebase-tools": "^7.7.0",
     "tslint": "^5.12.0",

@@ -1,4 +1,5 @@
 import * as Evernote from 'evernote';
+import * as XRegExp from 'xregexp';
 import xcape = require("xml-escape");
 
 const { Limits, Types } = Evernote;
@@ -25,15 +26,17 @@ export default class EvernoteTool {
   async createNote(clipping: Clipping) {
     const note = new Types.Note({
       title: normalizeNoteTitle(clipping.book),
-      tagNames: normalizeTags(['Kindle', clipping.book, clipping.author]),
+      tagNames: normalizeTags(['Kindle', clipping.book].concat(clipping.author.split(','))),
       content: `<?xml version="1.0" encoding="UTF-8"?>
       <!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">
       <en-note>
-        <p>${xcape(clipping.meta)}</p>
-        <br/>
         <p>${normalizeNoteText(xcape(clipping.text))}</p>
         <br/>
-        <p>${xcape(clipping.book)} ${xcape(clipping.author)}</p>
+        <p>
+          ${xcape(clipping.meta)}<br/>
+          - Book: ${xcape(clipping.book)}<br/>
+          - Author: ${xcape(clipping.author)}<br/>
+        </p>
       </en-note>
       `,
     });
@@ -42,21 +45,17 @@ export default class EvernoteTool {
   }
 }
 
-// function normalizeName(name: string): string {
-//   return name.replace(/,/g, '﹒');
-// }
-
 function normalizeTags(tags: string[]): string[] {
   return tags
-    .filter(t => t.match(Limits.EDAM_TAG_NAME_REGEX))
     .map(t => {
-      let tag = t.replace(/,/g, ' ');
+      let tag = t.trim().replace(/,/g, ' ');
       tag = tag.replace(/\s+/g, ' ');
       if (tag.length > Limits.EDAM_TAG_NAME_LEN_MAX) {
         tag = tag.slice(0, Limits.EDAM_TAG_NAME_LEN_MAX - 1) + '…';
       }
       return tag;
-    });
+    })
+    .filter(t => XRegExp(Limits.EDAM_TAG_NAME_REGEX).test(t));
 }
 
 function normalizeNoteText(text: string): string {
@@ -64,7 +63,9 @@ function normalizeNoteText(text: string): string {
 }
 
 function normalizeNoteTitle(title: string): string {
-  if (!title.match(Limits.EDAM_NOTE_TITLE_REGEX)) return "Untitled";
-  else return title.length <= Limits.EDAM_NOTE_TITLE_LEN_MAX ? title
-    : title.slice(0, Limits.EDAM_NOTE_TITLE_LEN_MAX - 1) + '…';
+  let t = title.trim();
+  if (t.length > Limits.EDAM_NOTE_TITLE_LEN_MAX) {
+    t = t.slice(0, Limits.EDAM_NOTE_TITLE_LEN_MAX - 1) + '…';
+  }
+  return XRegExp(Limits.EDAM_NOTE_TITLE_REGEX).test(t) ? t : "Untitled";
 }
