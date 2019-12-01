@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase/firebase.dart' show auth;
 import 'package:flutter/material.dart';
 import 'package:notever/framework.dart' show partition, postJson;
@@ -50,6 +52,9 @@ class _ClippingUploaderState extends State<ClippingUploaderFab> {
   /// Unique task id
   String _taskId;
 
+  /// Function, if none-null, should be called after uploading is done
+  VoidCallback _onComplete;
+
   @override
   Widget build(BuildContext context) => Stack(
     children: <Widget>[
@@ -72,11 +77,12 @@ class _ClippingUploaderState extends State<ClippingUploaderFab> {
     top: 14,
     left: 14,
     child: TweenAnimationBuilder(
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 2),
       tween: Tween<double>(
         begin: _prevUploadedBatches / _totalBatches,
-        end: _uploadedBatches / _totalBatches,
+        end: max(_uploadedBatches / _totalBatches, 0.01), // show 1% at the very beginning
       ),
+      onEnd: () => _onComplete?.call(),
       builder: (_, value, __) =>
         CircularProgressIndicator(
           value: value,
@@ -125,11 +131,12 @@ Please confirm to continue.
 
     int i = 0;
     for (var clippings in batches) {
-      await _uploadClippings(_taskId, i, clippings);
+      await _uploadClippings(_taskId, i++, clippings);
       await Future.delayed(const Duration(milliseconds: 25));
     }
 
-    _notifyComplete();
+    // register the onComplete callback
+    _onComplete = _notifyComplete;
   }
 
   Future<void> _uploadClippings(String taskId, int batchNo, Iterable<Clipping> clippings) async {
@@ -145,7 +152,6 @@ Please confirm to continue.
       debugPrint('sync clippings request rejected: $e');
     } finally {
       setState(() {
-//        _isUploading = false;
         _prevUploadedBatches = _uploadedBatches;
         _uploadedBatches += 1;
       });
@@ -153,7 +159,18 @@ Please confirm to continue.
   }
 
   void _notifyComplete() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => widget.onComplete?.call(_taskId));
+    Future.delayed(Duration(milliseconds: 300), () {
+      widget.onComplete?.call(_taskId);
+
+      // reset
+      setState(() {
+        _isUploading = false;
+        _totalBatches = _prevUploadedBatches = _uploadedBatches = 0;
+        _taskId = null;
+      });
+    });
+
+    _onComplete = null;
   }
 }
 
