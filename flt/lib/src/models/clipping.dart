@@ -55,7 +55,7 @@ class Clipping {
   /// pattern for parsing a clipping
   @visibleForTesting
   static final clippingPattern = RegExp(
-    r"^(.+) \((.+?)\)\r?\n(- .+? \| (.*))(?:\r?\n)*((?:.|[\n\r])*)", // (?:.|\n|\r\n)
+    r"^(.+) \(((?:[^()]+(?:\([^()]+\))?)+)\)\r?\n(- .+? \| (.*))(?:\r?\n)*((?:.|[\n\r])*)", // (?:.|\n|\r\n)
     multiLine: true,
     caseSensitive: false,
   );
