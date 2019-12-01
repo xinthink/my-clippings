@@ -8,13 +8,13 @@ import 'package:notever/widgets.dart' show JobItem;
 
 /// Screen showing Clippings syncing jobs.
 class JobsScreen extends StatefulWidget {
-  /// Instantiate a [JobsScreen]
+  /// Instantiate a [JobsScreen], to watch the syncing job indexed with [jobKey]
   JobsScreen({
     Key key,
-    @required this.uid,
+    @required this.jobKey,
   }) : super(key: key);
 
-  final String uid;
+  final String jobKey;
 
   @override
   State<StatefulWidget> createState() => _JobsScreenState();
@@ -30,7 +30,8 @@ class _JobsScreenState extends State<JobsScreen> {
     super.initState();
     _jobsSubs = firestore()
       .collection('_jobs')
-      .where('uid', '==', widget.uid)
+      .doc(widget.jobKey)
+      .collection("batches")
       .orderBy('createdAt', 'desc')
       .onSnapshot
       .listen(

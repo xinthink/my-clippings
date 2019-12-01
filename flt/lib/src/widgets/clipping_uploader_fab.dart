@@ -20,8 +20,8 @@ class ClippingUploaderFab extends StatefulWidget {
   /// A list of [Clipping]s to be uploaded.
   final List<Clipping> clippings;
 
-  /// Callback when all [Clipping]s are uploaded, no matter successful or not
-  final VoidCallback onComplete;
+  /// Callback with an unique `task id` when all [Clipping]s are uploaded, no matter successful or not
+  final ValueChanged<String> onComplete;
 
   @override
   State<StatefulWidget> createState() => _ClippingUploaderState();
@@ -46,6 +46,9 @@ class _ClippingUploaderState extends State<ClippingUploaderFab> {
 
   /// Previous number of uploaded batches, used to display progress animation
   int _prevUploadedBatches = 0;
+
+  /// Unique task id
+  String _taskId;
 
   @override
   Widget build(BuildContext context) => Stack(
@@ -112,7 +115,7 @@ Please confirm to continue.
     if (!confirmed) return;
 
     final batches = partition(_clippings, _BATCH_SIZE);
-    final taskId = Uuid().v4();
+    _taskId = Uuid().v4();
 
     setState(() {
       _isUploading = true;
@@ -122,7 +125,7 @@ Please confirm to continue.
 
     int i = 0;
     for (var clippings in batches) {
-      await _uploadClippings(taskId, i, clippings);
+      await _uploadClippings(_taskId, i, clippings);
       await Future.delayed(const Duration(milliseconds: 25));
     }
 
@@ -150,7 +153,7 @@ Please confirm to continue.
   }
 
   void _notifyComplete() {
-    WidgetsBinding.instance.addPostFrameCallback((_) => widget.onComplete?.call());
+    WidgetsBinding.instance.addPostFrameCallback((_) => widget.onComplete?.call(_taskId));
   }
 }
 

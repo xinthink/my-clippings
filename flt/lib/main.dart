@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       case '/auth':
         return _createRoute(settings, (_) => AuthScreen(uid: q['uid']));
       case '/jobs':
-        return _createRoute(settings, (_) => JobsScreen(uid: settings.arguments));
+        return _createRoute(settings, (_) => JobsScreen(jobKey: settings.arguments));
       default:
         return null;
     }
