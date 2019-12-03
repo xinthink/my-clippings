@@ -15,7 +15,7 @@ Follow instrunctions on the [web page](https://notever.web.app), the app will ex
 This repo is still being worked on, may has situations not handled properly:
 
 1. [Evernote API Rate Limits], importing large number of clippings may be interrupted
-2. [Cloud Functions Execution Timeout], importing large number of clippings may be interrupted
+2. [Cloud Functions Execution Timeout], importing large number of clippings may be interrupted ([Fixed](https://github.com/xinthink/my-clippings/commit/b6153bad071a7dce58c80302905ba1cd495aad57))
 3. Multilingual Kindle clippings, may cause bugs in clipping parsing or note creation
 
 ## Development
