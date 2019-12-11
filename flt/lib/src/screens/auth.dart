@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase/firebase.dart' show auth, firestore;
+import 'package:notever/widgets.dart' show evernoteBackground;
 
 /// Handle OAuth result
 class AuthScreen extends StatefulWidget {
@@ -24,12 +25,7 @@ class _AuthState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     body: Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: const AssetImage(_BACKGROUND),
-          repeat: ImageRepeat.repeat,
-        ),
-      ),
+      decoration: evernoteBackground(),
       padding: const EdgeInsets.symmetric(vertical: 150),
       child: Container(
         alignment: Alignment.topCenter,
@@ -77,5 +73,3 @@ class _AuthState extends State<AuthScreen> {
     debugPrint("firebase auth done! $user");
   }
 }
-
-const _BACKGROUND = 'assets/images/evernote_bg.png';

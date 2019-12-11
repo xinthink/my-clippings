@@ -2,7 +2,7 @@ import 'dart:async' show StreamSubscription;
 
 import 'package:firebase/firebase.dart' show auth, User;
 import 'package:flutter/material.dart';
-import 'package:notever/widgets.dart' show Login, ClippingList, ClippingListState, ClippingUploaderFab;
+import 'package:notever/widgets.dart' show evernoteBackground, Login, ClippingList, ClippingListState, ClippingUploaderFab;
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -48,12 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: const AssetImage(_BACKGROUND),
-            repeat: ImageRepeat.repeat,
-          ),
-        ),
+        decoration: evernoteBackground(),
         child: currentUser != null
           ? ClippingList(
             key: clippingListKey,
@@ -139,5 +134,3 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 }
-
-const _BACKGROUND = 'assets/images/evernote_bg.png';

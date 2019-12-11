@@ -1,13 +1,9 @@
-import 'dart:async' show StreamSubscription;
-
-import 'package:firebase/firebase.dart' show auth, firestore;
-import 'package:firebase/firestore.dart' show QuerySnapshot;
+import 'package:firebase/firebase.dart' show auth;
 import 'package:flutter/material.dart';
-import 'package:notever/models.dart' show Job;
-import 'package:notever/widgets.dart' show JobItem;
+import 'package:notever/widgets.dart' show jobList, evernoteBackground;
 
 /// Screen showing Clippings syncing jobs.
-class JobsScreen extends StatefulWidget {
+class JobsScreen extends StatelessWidget {
   /// Instantiate a [JobsScreen], to watch the syncing job indexed with [jobKey]
   JobsScreen({
     Key key,
@@ -15,36 +11,6 @@ class JobsScreen extends StatefulWidget {
   }) : super(key: key);
 
   final String jobKey;
-
-  @override
-  State<StatefulWidget> createState() => _JobsScreenState();
-}
-
-/// [State] of [JobsScreen]
-class _JobsScreenState extends State<JobsScreen> {
-  final _jobs = List<Map<String, dynamic>>();
-  StreamSubscription<QuerySnapshot> _jobsSubs;
-
-  @override
-  void initState() {
-    super.initState();
-    _jobsSubs = firestore()
-      .collection('_jobs')
-      .doc(widget.jobKey)
-      .collection("batches")
-      .orderBy('createdAt', 'desc')
-      .onSnapshot
-      .listen(
-        _onJobsUpdated,
-        onError: (e) => debugPrint("query jobs failed: $e"),
-      );
-  }
-
-  @override
-  void dispose() {
-    _jobsSubs?.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) =>
@@ -56,73 +22,23 @@ class _JobsScreenState extends State<JobsScreen> {
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             tooltip: 'Logout',
-            onPressed: _onLogout,
+            onPressed: () => _onLogout(context),
           ),
         ],
       ),
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: const AssetImage(_BACKGROUND),
-            repeat: ImageRepeat.repeat,
-          ),
-        ),
+        decoration: evernoteBackground(),
         child: Container(
           alignment: Alignment.topCenter,
           child: Container(
             width: 800,
-            child: _jobs.isNotEmpty ? _buildJobs() : _buildBlankView(),
+            child: jobList(jobKey),
           ),
         ),
       ),
     );
 
-  /// Rendering a blank view when no job available
-  Widget _buildBlankView() => Card(
-    margin: const EdgeInsets.symmetric(horizontal: 80, vertical: 32),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 48),
-      child: const Text('Just a second, receiving updates...',
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          color: Colors.black87,
-          fontSize: 16,
-        ),
-      ),
-    ),
-  );
-
-  /// Rendering status of jobs
-  Widget _buildJobs() => ListView.builder(
-    itemCount: _jobs.length,
-    itemBuilder: _buildJob,
-  );
-
-  /// Render a single `Job`
-  Widget _buildJob(BuildContext context, int i) {
-    final job = _jobs[i];
-    final atTop = i == 0;
-    final atBottom = i == _jobs.length - 1;
-    return JobItem(
-      job: Job.fromDoc(job),
-      margin: EdgeInsets.only(left: 80, right: 80,
-        top: atTop ? 32 : 10,
-        bottom: atBottom ? 32 : 10,
-      ),
-    );
-  }
-
-  /// Callback when Firestore query result updated
-  void _onJobsUpdated(QuerySnapshot snapshot) {
-    final docs = snapshot.docs
-      .map((ds) => ds.exists ? ds.data() : null)
-      .where((d) => d != null);
-    setState(() {
-      _jobs.replaceRange(0, _jobs.length, docs);
-    });
-  }
-
-  void _onLogout() async {
+  void _onLogout(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
@@ -152,5 +68,3 @@ class _JobsScreenState extends State<JobsScreen> {
     }
   }
 }
-
-const _BACKGROUND = 'assets/images/evernote_bg.png';
